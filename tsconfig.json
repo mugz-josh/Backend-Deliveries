@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                        // Modern JS target
+    "module": "commonjs",                       // Node.js module system
+    "rootDir": "./src",                          // Root folder for TS source files
+    "outDir": "./dist",                          // Compiled JS output
+    "strict": true,                              // Enable all strict checks
+    "esModuleInterop": true,                     // Allows default imports from commonjs
+    "allowSyntheticDefaultImports": true,       // Needed for some module imports
+    "forceConsistentCasingInFileNames": true,   // Prevent case mismatch
+    "moduleResolution": "node",                  // Node module resolution
+    "skipLibCheck": true,                        // Skip checking @types
+    "sourceMap": true,                           // Generate source maps
+    "declaration": true,                         // Generate .d.ts files
+    "declarationMap": true,                      // Map for declarations
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "isolatedModules": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"], // Types folder
+    "baseUrl": "./src"                           // Allows absolute imports from src
+  },
+  "include": ["src/**/*"],                        // Include all source files
+  "exclude": ["node_modules", "dist"]            // Exclude build output
+}
