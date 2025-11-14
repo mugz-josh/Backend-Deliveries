@@ -1,12 +1,32 @@
-// src/types.ts
+import { RowDataPacket, OkPacket, ResultSetHeader } from "mysql2";
 
-export interface BookingWithTimeline {
-  id: string;
+export interface TimelineEvent {
+  status: string;
+  date: string;
+  completed: boolean;
+}
+
+export interface BookingRow extends RowDataPacket {
+  id: number;
   service: string;
   customer_name: string;
   email: string;
-  phone: string;
-  created_at: string;       // or Date if you prefer
+  phone: string | null;
+  created_at: string;
   tracking_id: string;
-  timeline?: string[];      // optional, can be added later
 }
+
+export interface BookingWithTimeline {
+  id: number;
+  service: string;
+  customer_name: string;
+  email: string;
+  phone: string | null;
+  created_at: string;
+  tracking_id: string;
+  timeline: TimelineEvent[];
+  status: string;
+}
+
+// Union type for query results
+export type QueryResult<T = any> = T[] | ResultSetHeader | OkPacket;

@@ -1,36 +1,10 @@
-// src/routes/booking.ts
 import { Router } from "express";
 import db from "../db";
 import nodemailer from "nodemailer";
 import { RowDataPacket } from "mysql2";
-
-
+import { BookingWithTimeline, BookingRow, TimelineEvent } from "../types";
 
 const router = Router();
-
-// -----------------------
-// Types
-// -----------------------
-interface BookingRow extends RowDataPacket {
-  id: number;
-  service: string;
-  customer_name: string;
-  email: string;
-  phone: string | null;
-  created_at: string;
-  tracking_id: string;
-}
-
-interface TimelineEvent {
-  status: string;
-  date: string;
-  completed: boolean;
-}
-
-interface BookingWithTimeline extends BookingRow {
-  timeline: TimelineEvent[];
-  status: string;
-}
 
 // -----------------------
 // Helper: generate tracking ID
@@ -115,7 +89,37 @@ router.get("/:tracking_id", async (req, res) => {
 
     const bookingRow = rows[0];
 
-    // Map to BookingWithTimeline
+    // Create timeline based on booking creation date
+    const createdDate = new Date(bookingRow.created_at);
+    const timeline: TimelineEvent[] = [
+      { 
+        status: "Package received", 
+        date: createdDate.toISOString(), 
+        completed: true 
+      },
+      { 
+        status: "In transit to distribution center", 
+        date: new Date(createdDate.getTime() + 24 * 60 * 60 * 1000).toISOString(), 
+        completed: true 
+      },
+      { 
+        status: "Arrived at distribution center", 
+        date: new Date(createdDate.getTime() + 48 * 60 * 60 * 1000).toISOString(), 
+        completed: true 
+      },
+      { 
+        status: "Out for delivery", 
+        date: new Date(createdDate.getTime() + 72 * 60 * 60 * 1000).toISOString(), 
+        completed: false 
+      },
+      { 
+        status: "Delivered", 
+        date: "Pending", 
+        completed: false 
+      },
+    ];
+
+    // Map to BookingWithTimeline - this should now work without type errors
     const booking: BookingWithTimeline = {
       id: bookingRow.id,
       service: bookingRow.service,
@@ -124,13 +128,7 @@ router.get("/:tracking_id", async (req, res) => {
       phone: bookingRow.phone,
       created_at: bookingRow.created_at,
       tracking_id: bookingRow.tracking_id,
-      timeline: [
-        { status: "Package received", date: bookingRow.created_at, completed: true },
-        { status: "In transit to distribution center", date: "2025-10-03 12:00", completed: true },
-        { status: "Arrived at distribution center", date: "2025-10-04 08:00", completed: true },
-        { status: "Out for delivery", date: "2025-10-05 10:00", completed: false },
-        { status: "Delivered", date: "Pending", completed: false },
-      ],
+      timeline: timeline,
       status: "In Transit",
     };
 

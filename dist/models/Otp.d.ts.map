@@ -1,0 +1,1 @@
+{"version":3,"file":"Otp.d.ts","sourceRoot":"","sources":["../../src/models/Otp.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,GAAG;IAClB,EAAE,CAAC,EAAE,MAAM,CAAC;IACZ,KAAK,EAAE,MAAM,CAAC;IACd,GAAG,EAAE,MAAM,CAAC;IACZ,UAAU,EAAE,IAAI,CAAC;IACjB,UAAU,CAAC,EAAE,IAAI,CAAC;CACnB"}
