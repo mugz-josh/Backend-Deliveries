@@ -45,4 +45,3 @@ async function testConnection() {
 }
 // Run test immediately (optional)
 testConnection();
-//# sourceMappingURL=db.js.map

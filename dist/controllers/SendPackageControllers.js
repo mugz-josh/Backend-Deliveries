@@ -43,4 +43,3 @@ const sendPackage = async (req, res) => {
     }
 };
 exports.sendPackage = sendPackage;
-//# sourceMappingURL=SendPackageControllers.js.map

@@ -25,4 +25,3 @@ async function resetAdminPassword() {
     }
 }
 resetAdminPassword();
-//# sourceMappingURL=resetAdminpassword.js.map

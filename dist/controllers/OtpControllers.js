@@ -143,4 +143,3 @@ const checkEmail = async (req, res) => {
     }
 };
 exports.checkEmail = checkEmail;
-//# sourceMappingURL=OtpControllers.js.map

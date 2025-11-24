@@ -122,4 +122,3 @@ router.get("/:tracking_id", async (req, res) => {
     }
 });
 exports.default = router;
-//# sourceMappingURL=booking.js.map

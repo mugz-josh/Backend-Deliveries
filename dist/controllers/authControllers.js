@@ -141,4 +141,3 @@ const loginUser = async (req, res) => {
     }
 };
 exports.loginUser = loginUser;
-//# sourceMappingURL=authControllers.js.map

@@ -103,4 +103,3 @@ Package Details:
     }
 };
 exports.sendDeliveryEmail = sendDeliveryEmail;
-//# sourceMappingURL=mailer.js.map

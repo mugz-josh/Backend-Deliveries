@@ -9,4 +9,3 @@ const router = express_1.default.Router();
 // POST endpoint for sending package
 router.post("/", SendPackageControllers_1.sendPackage);
 exports.default = router;
-//# sourceMappingURL=SendPackage.js.map

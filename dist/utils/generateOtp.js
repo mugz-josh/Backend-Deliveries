@@ -14,4 +14,3 @@ const generateOtp = (length = 6) => {
     return otp;
 };
 exports.generateOtp = generateOtp;
-//# sourceMappingURL=generateOtp.js.map

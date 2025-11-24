@@ -70,4 +70,3 @@ router.delete('/profile/avatar', authMiddleware_1.verifyToken, async (req, res) 
     }
 });
 exports.default = router;
-//# sourceMappingURL=UserRoutes.js.map

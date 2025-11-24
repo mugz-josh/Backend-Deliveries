@@ -12,4 +12,3 @@ const testConnection = async () => {
     }
 };
 testConnection();
-//# sourceMappingURL=test-pool.js.map

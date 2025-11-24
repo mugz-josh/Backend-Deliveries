@@ -37,4 +37,3 @@ router.get("/profile", authMiddleware_1.verifyToken, (0, authMiddleware_1.author
     res.json({ message: "This is your profile", user });
 });
 exports.default = router;
-//# sourceMappingURL=OtpRoutes.js.map
