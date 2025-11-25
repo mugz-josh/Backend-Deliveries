@@ -22,15 +22,30 @@ dotenv.config();
 const app = express();
 
 // ---------------------
-// Middleware
+// CORS Configuration
 // ---------------------
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://deliveries-app-beta.vercel.app"
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like Postman)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 
+// ---------------------
+// Middleware
+// ---------------------
 app.use(bodyParser.json());
 
 // ---------------------
@@ -39,31 +54,23 @@ app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ---------------------
-// Routes
-// ---------------------
-
 // Test route
+// ---------------------
 app.get("/", (req, res) => {
   res.json({ 
-    message: "✅ Backend is running successfully on Railway!",
+    message: "✅ Backend is running successfully!",
     status: "active",
     timestamp: new Date().toISOString()
   });
 });
 
-// OTP routes (register, verify, login)
+// ---------------------
+// Routes
+// ---------------------
 app.use("/api/otp", OtpRoutes);
-
-// Deliveries routes
 app.use("/api/deliveries", DeliveriesRoutes);
-
-// User profile routes (update profile, upload avatar)
 app.use("/api/user", UserRoutes);
-
-// Booking routes
 app.use("/api/bookings", BookingRoutes);
-
-// Support / Donate routes
 app.use("/api/support", SupportRoutes);
 
 // 404 fallback for undefined routes
