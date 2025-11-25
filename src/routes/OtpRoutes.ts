@@ -9,7 +9,8 @@ import {
 } from "../controllers/authControllers";
 import { verifyToken, authorizeRoles } from "../middleware/authMiddleware";
 import { getAllUsers, updateUserRole, deleteUser } from "../controllers/AdminControllers";
-import db from "../db";
+import db from "../utils/dbPostgres";   // PostgreSQL
+
 
 const router = Router();
 
