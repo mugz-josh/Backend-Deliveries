@@ -1,15 +1,8 @@
 import express from "express";
 import nodemailer from "nodemailer";
-import mysql from "mysql2/promise";
+import db from "../db"; // ✅ Use your existing database connection
 
 const router = express.Router();
-
-const dbConfig = {
-  host: "localhost",
-  user: "root",
-  password: "",          // your MySQL password
-  database: "deliveries" // your database name
-};
 
 router.post("/", async (req, res) => {
   const { name, email, phone, amount, message } = req.body;
@@ -19,14 +12,12 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    // 1️⃣ Save the data in MySQL including phone
-    const connection = await mysql.createConnection(dbConfig);
-    await connection.execute(
+    // 1️⃣ Save the data in MySQL using your existing db connection
+    await db.query(
       `INSERT INTO support_submissions (name, email, phone, amount, message, created_at) 
        VALUES (?, ?, ?, ?, ?, NOW())`,
       [name, email, phone || null, amount, message || null]
     );
-    await connection.end();
 
     // 2️⃣ Send emails
     const transporter = nodemailer.createTransport({
