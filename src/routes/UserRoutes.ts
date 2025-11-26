@@ -3,7 +3,8 @@ import { verifyToken, AuthRequest } from '../middleware/authMiddleware';
 import upload from '../middleware/upload';
 import fs from 'fs';
 import path from 'path';
-import { pool } from '../db';
+import pool from '../db';
+
 
 const router = express.Router();
 

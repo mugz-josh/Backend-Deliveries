@@ -1,6 +1,8 @@
 import express from "express";
 import nodemailer from "nodemailer";
-import db from "../utils/dbPostgres";   // PostgreSQL
+import db from "../db";
+
+   // PostgreSQL
  // ✅ Use your existing database connection
 
 const router = express.Router();

@@ -8,8 +8,10 @@ import {
   loginUser 
 } from "../controllers/authControllers";
 import { verifyToken, authorizeRoles } from "../middleware/authMiddleware";
-import { getAllUsers, updateUserRole, deleteUser } from "../controllers/AdminControllers";
-import db from "../utils/dbPostgres";   // PostgreSQL
+import { getAllUsers, updateUserRole, deleteUser } from "../controllers/AdminControllers";  // PostgreSQL
+import db from "../db";
+ // ✅ correct one
+
 
 
 const router = Router();
