@@ -1,7 +1,7 @@
+// src/routes/booking.ts
 import { Router } from "express";
-import db from "../db";
+import db from "../db"; // PostgreSQL Pool
 import nodemailer from "nodemailer";
-import { RowDataPacket } from "mysql2";
 import { BookingWithTimeline, BookingRow, TimelineEvent } from "../types";
 
 const router = Router();
@@ -28,9 +28,9 @@ router.post("/", async (req, res) => {
 
     const tracking_id = generateTrackingId();
 
-    // Insert booking into database
+    // Insert booking into PostgreSQL
     await db.query(
-      "INSERT INTO bookings (service, customer_name, email, phone, tracking_id) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO bookings (service, customer_name, email, phone, tracking_id) VALUES ($1, $2, $3, $4, $5)",
       [service, customer_name, email, phone || null, tracking_id]
     );
 
@@ -77,49 +77,31 @@ router.get("/:tracking_id", async (req, res) => {
   try {
     const { tracking_id } = req.params;
 
-    const [rows] = await db.query<BookingRow[]>(
-      "SELECT * FROM bookings WHERE tracking_id = ?",
+    // Query PostgreSQL
+    const result = await db.query<BookingRow>(
+      "SELECT * FROM bookings WHERE tracking_id = $1",
       [tracking_id]
     );
 
-    // Check if any booking exists
-    if (!rows || rows.length === 0 || !rows[0]) {
+    const rows = result.rows;
+
+    if (!rows || rows.length === 0) {
       return res.status(404).json({ error: "Tracking ID not found" });
     }
 
     const bookingRow = rows[0];
 
-    // Create timeline based on booking creation date
+    // Build timeline
     const createdDate = new Date(bookingRow.created_at);
     const timeline: TimelineEvent[] = [
-      { 
-        status: "Package received", 
-        date: createdDate.toISOString(), 
-        completed: true 
-      },
-      { 
-        status: "In transit to distribution center", 
-        date: new Date(createdDate.getTime() + 24 * 60 * 60 * 1000).toISOString(), 
-        completed: true 
-      },
-      { 
-        status: "Arrived at distribution center", 
-        date: new Date(createdDate.getTime() + 48 * 60 * 60 * 1000).toISOString(), 
-        completed: true 
-      },
-      { 
-        status: "Out for delivery", 
-        date: new Date(createdDate.getTime() + 72 * 60 * 60 * 1000).toISOString(), 
-        completed: false 
-      },
-      { 
-        status: "Delivered", 
-        date: "Pending", 
-        completed: false 
-      },
+      { status: "Package received", date: createdDate.toISOString(), completed: true },
+      { status: "In transit to distribution center", date: new Date(createdDate.getTime() + 24 * 60 * 60 * 1000).toISOString(), completed: true },
+      { status: "Arrived at distribution center", date: new Date(createdDate.getTime() + 48 * 60 * 60 * 1000).toISOString(), completed: true },
+      { status: "Out for delivery", date: new Date(createdDate.getTime() + 72 * 60 * 60 * 1000).toISOString(), completed: false },
+      { status: "Delivered", date: "Pending", completed: false },
     ];
 
-    // Map to BookingWithTimeline - this should now work without type errors
+    // Build final booking object
     const booking: BookingWithTimeline = {
       id: bookingRow.id,
       service: bookingRow.service,
