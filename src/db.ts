@@ -2,33 +2,39 @@
 import dotenv from "dotenv"; // ✅ MUST import dotenv first
 dotenv.config(); // ✅ Load .env variables immediately
 
-import { Pool } from "pg";
+import mysql from "mysql2/promise";
 
-// Check if DATABASE_URL exists
-if (!process.env.DATABASE_URL) {
-  console.error("❌ DATABASE_URL is missing in .env!");
-  process.exit(1); // stop execution if DATABASE_URL not set
+// Check for required MySQL environment variables (allow empty password)
+const requiredEnvVars = ['DB_HOST', 'DB_USER', 'DB_NAME'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+  console.error(`❌ Missing required environment variables: ${missingVars.join(', ')}`);
+  process.exit(1);
 }
 
-// Create PostgreSQL pool
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // required for Render
-  },
+// Create MySQL connection pool
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: parseInt(process.env.DB_PORT || '3306'),
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // Optional: test connection
 async function testConnection() {
   try {
-    const client = await pool.connect();
-    console.log("✅ Connected to PostgreSQL successfully!");
-    const res = await client.query("SELECT NOW() AS current_time");
-    console.log("Query test result:", res.rows[0]);
-    client.release();
+    const connection = await pool.getConnection();
+    console.log("✅ Connected to MySQL successfully!");
+    const [rows] = await connection.execute("SELECT NOW() AS `current_time`");
+    console.log("Query test result:", rows);
+    connection.release();
   } catch (err: unknown) {
-    if (err instanceof Error) console.error("❌ PostgreSQL connection error:", err.message);
-    else console.error("❌ PostgreSQL connection error:", err);
+    if (err instanceof Error) console.error("❌ MySQL connection error:", err.message);
+    else console.error("❌ MySQL connection error:", err);
   }
 }
 
